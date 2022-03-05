@@ -26,6 +26,17 @@ describe("Shopping cart should checkout", () => {
         expect(order.loyaltyPoints).toBe(10);
     });
 
+    it("Should calculate correct total and loyalty points for 20% discounted products", () => {
+        const customer = new Customer("Test customer");
+        const products = [new Product(200, "DIS_20_TestProduct", "Test product")];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = shoppingCart.checkout();
+
+        expect(order.totalPrice).toBe(160);
+        expect(order.loyaltyPoints).toBe(10);
+    });
+
     it("Should calculate correct total and loyalty points for non discounted products", () => {
         const customer = new Customer("Test customer");
         const products = [new Product(100, "TestProduct", "Test product")];
@@ -35,6 +46,67 @@ describe("Shopping cart should checkout", () => {
 
         expect(order.totalPrice).toBe(100);
         expect(order.loyaltyPoints).toBe(20);
+    });
+
+    it("Should calculate correct total and loyalty points for two products with Buy 2 Get 1", () => {
+        const customer = new Customer("Test customer");
+        const products = [
+            new Product(100, "BULK_BUY_2_GET_1TestProduct", "Test product"),
+            new Product(100, "BULK_BUY_2_GET_1TestProduct", "Test product")
+        ];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = shoppingCart.checkout();
+
+        expect(order.totalPrice).toBe(200);
+        expect(order.loyaltyPoints).toBe(40);
+    });
+
+    it("Should calculate correct total and loyalty points for three products with Buy 2 Get 1", () => {
+        const customer = new Customer("Test customer");
+        const products = [
+            new Product(100, "BULK_BUY_2_GET_1TestProduct", "Test product"),
+            new Product(100, "BULK_BUY_2_GET_1TestProduct", "Test product"),
+            new Product(100, "BULK_BUY_2_GET_1TestProduct", "Test product")
+        ];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = shoppingCart.checkout();
+
+        expect(order.totalPrice).toBe(200);
+        expect(order.loyaltyPoints).toBe(40);
+    });
+
+
+    it("Should calculate correct total and loyalty points for total greater than 500 without discount", () => {
+        const customer = new Customer("Test customer");
+        const products = [
+            new Product(200, "DIS_20_TestProduct", "Test product"),
+            new Product(200, "DIS_20_TestProduct", "Test product"),
+            new Product(200, "DIS_20_TestProduct", "Test product"),
+            new Product(200, "DIS_20_TestProduct", "Test product")
+        ];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = shoppingCart.checkout();
+
+        expect(order.totalPrice).toBe(608);
+        expect(order.loyaltyPoints).toBe(40);
+    });
+
+    it("Should calculate correct total and loyalty points for total greater than 500 with discount", () => {
+        const customer = new Customer("Test customer");
+        const products = [
+            new Product(200, "TestProduct", "Test product"),
+            new Product(200, "TestProduct", "Test product"),
+            new Product(200, "TestProduct", "Test product")
+        ];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = shoppingCart.checkout();
+
+        expect(order.totalPrice).toBe(570);
+        expect(order.loyaltyPoints).toBe(120);
     });
 });
 
